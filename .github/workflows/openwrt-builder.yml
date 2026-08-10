@@ -18,7 +18,7 @@ on:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt   # 官方原生源码
-  REPO_BRANCH: v25.12.5                          # 锁定 25.12.5 版本
+  REPO_BRANCH: v24.10.8                          # 锁定 24.10.8 版本
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
   DIY_P1_SH: diy-part1.sh
