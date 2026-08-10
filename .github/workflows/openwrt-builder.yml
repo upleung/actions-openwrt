@@ -156,8 +156,9 @@ jobs:
         if [ -n "$ROOTFS_FILE" ]; then
           echo "Found rootfs: $ROOTFS_FILE"
           
-          # 导入镜像，修改 "openwrt-onecloud" 为你的镜像仓库名
-          docker import "$ROOTFS_FILE" "$DOCKER_USERNAME/openwrt-onecloud:23.05.6"
+          # 关键修改：增加 --platform linux/arm/v7
+          docker import --platform linux/arm/v7 "$ROOTFS_FILE" "$DOCKER_USERNAME/openwrt-onecloud:23.05.6"
+          
           docker push "$DOCKER_USERNAME/openwrt-onecloud:23.05.6"
           
           docker tag "$DOCKER_USERNAME/openwrt-onecloud:23.05.6" "$DOCKER_USERNAME/openwrt-onecloud:latest"
