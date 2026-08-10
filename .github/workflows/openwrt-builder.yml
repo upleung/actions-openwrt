@@ -1,7 +1,7 @@
 #
 # https://github.com/P3TERX/Actions-OpenWrt
 #
-# File: .github/workflows/openwrt-bulder.yml
+# File: .github/workflows/openwrt-builder.yml
 # Description: Build OpenWrt using GitHub Actions
 #
 # Copyright (c) 2019-2024 P3TERX <https://p3terx.com>
@@ -131,7 +131,6 @@ jobs:
       run: |
         echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
         touch release.txt
-        [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload firmware to release
@@ -150,21 +149,17 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
-        # 登录 Docker Hub
         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
         
-        # 寻找生成的 rootfs.tar.gz 文件
         ROOTFS_FILE=$(find ${{ env.FIRMWARE }} -type f -name "*rootfs.tar.gz" | head -n 1)
         
         if [ -n "$ROOTFS_FILE" ]; then
           echo "Found rootfs: $ROOTFS_FILE"
-          # 导入 rootfs 并打标签。请将 openwrt-onecloud 替换为你想要的仓库名
-          docker import "$ROOTFS_FILE" "$DOCKER_USERNAME/openwrt-onecloud:23.05.6"
           
-          # 推送到 Docker Hub
+          # 导入镜像，修改 "openwrt-onecloud" 为你的镜像仓库名
+          docker import "$ROOTFS_FILE" "$DOCKER_USERNAME/openwrt-onecloud:23.05.6"
           docker push "$DOCKER_USERNAME/openwrt-onecloud:23.05.6"
           
-          # 顺便打个 latest 标签并推送
           docker tag "$DOCKER_USERNAME/openwrt-onecloud:23.05.6" "$DOCKER_USERNAME/openwrt-onecloud:latest"
           docker push "$DOCKER_USERNAME/openwrt-onecloud:latest"
           
